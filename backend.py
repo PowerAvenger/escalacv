@@ -81,9 +81,6 @@ datos
 
 # %%
 datos_dia=datos.resample('D').mean()
-datos_dia
-
-# %%
 datos_dia['value']=datos_dia['value'].round(2)
 datos_dia
 
@@ -132,7 +129,7 @@ datos_dia['color']=datos_dia['escala'].map(colores)
 datos_dia
 
 # %%
-escala_ordenada= ['muy bajo', 'bajo','medio','alto','muy alto','chungo']
+escala_ordenada= ['chungo', 'muy alto','alto','medio','bajo','muy bajo']
 datos_dia['escala']=pd.Categorical(datos_dia['escala'],categories=escala_ordenada, ordered=True)
 datos_dia
 
