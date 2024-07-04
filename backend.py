@@ -132,10 +132,17 @@ datos_dia['color']=datos_dia['escala'].map(colores)
 datos_dia
 
 # %%
+escala_ordenada= ['muy bajo', 'bajo','medio','alto','muy alto','chungo']
+datos_dia['escala']=pd.Categorical(datos_dia['escala'],categories=escala_ordenada, ordered=True)
+datos_dia
+
+# %%
 def graf_ecv_anual():
     graf_ecv_anual=px.bar(datos_dia, x='fecha', y='value', 
-        color='escala',color_discrete_map=colores,
-        labels={'value':'precio medio diario €/MWh'},
+        color='escala',
+        color_discrete_map=colores,
+        category_orders={'escala':escala_ordenada},
+        labels={'value':'precio medio diario €/MWh', 'escala':'escala_cv'},
         title="Precios medios del mercado diario OMIE. Año 2024")
     graf_ecv_anual.update_xaxes(
         #tickmode='array',
