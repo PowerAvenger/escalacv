@@ -84,6 +84,10 @@ datos_dia=datos.resample('D').mean()
 datos_dia
 
 # %%
+datos_dia['value']=datos_dia['value'].round(2)
+datos_dia
+
+# %%
 valor_minimo_diario=datos_dia['value'].min()
 valor_maximo_diario=datos_dia['value'].max()
 valor_minimo_diario,valor_maximo_diario
@@ -132,13 +136,17 @@ def graf_ecv_anual():
     graf_ecv_anual=px.bar(datos_dia, x='fecha', y='value', 
         color='escala',color_discrete_map=colores,
         labels={'value':'precio medio diario €/MWh'},
-        title="Precios medios del mercado diario OMIE. Escala Cavero-Vidal")
+        title="Precios medios del mercado diario OMIE. Año 2024")
     graf_ecv_anual.update_xaxes(
         #tickmode='array',
         #tickvals=pd.date_range(start='2024-01-01', periods=20, freq='MS'),  # Marcas mensuales
         #ticktext=['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
         showgrid=True
-)
+    )
+    graf_ecv_anual.update_traces(
+        marker_line_width=0
+    )
+
     return graf_ecv_anual
 
 # %%
