@@ -1,5 +1,5 @@
 import streamlit as st
-from backend import graf_ecv_anual, graf_ecv_anual_queso, graf_ecv_mensual
+from backend import graf_ecv_anual, graf_ecv_anual_queso, graf_ecv_mensual, graf_horaria
 
 #pg = st.navigation([st.Page("escalacv.py"), st.Page("pages/page_1.py")])
 #pg.run()
@@ -38,6 +38,8 @@ with col5:
     st.plotly_chart(graf_ecv_anual_queso())
 with col6:
     st.plotly_chart(graf_ecv_mensual())
+with col7:
+    st.plotly_chart(graf_horaria())
 #st.plotly_chart(graf2_año)
 #graf1_1=graf_dia()
 #st.plotly_chart(graf1_1)

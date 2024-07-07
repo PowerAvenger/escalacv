@@ -2,6 +2,7 @@
 import requests
 import pandas as pd
 import plotly.express as px
+import datetime
 import numpy as np
 import plotly.graph_objects as go
 
@@ -66,6 +67,9 @@ meses = {
     'December': 'Diciembre'
 }
 
+# %% [markdown]
+# ### Esta es la tabla de valores horarios tratada
+
 # %%
 datos['fecha']=datos['datetime'].dt.strftime('%d/%m/%Y')
 datos['fecha']=pd.to_datetime(datos['fecha'],format='%d/%m/%Y')
@@ -79,10 +83,24 @@ datos['año']=datos['datetime'].dt.year
 datos.set_index('datetime', inplace=True)
 datos
 
+# %%
+valor_minimo_horario=datos['value'].min()
+valor_maximo_diario=datos['value'].max()
+valor_minimo_horario,valor_maximo_diario
+
+# %% [markdown]
+# ### Copia para escala de colores
+
+# %%
+datos_horarios=datos
+datos_horarios
+
+
 # %% [markdown]
 # ### Agrupación por días
 
 # %%
+
 datos_dia=datos.resample('D').mean()
 datos_dia['value']=datos_dia['value'].round(2)
 datos_dia=datos_dia.drop(columns=['hora'])
@@ -114,7 +132,7 @@ datos_mes
 
 # %%
 datos_limites = {
-    'rango': [-10,20,40,60,80,100,120],
+    'rango': [-10,20.01,40.01,60.01,80.01,100.01,10000],
     'valor_asignado': ['muy bajo', 'bajo','medio','alto','muy alto','chungo','xtrem'],
 }
 
@@ -123,7 +141,22 @@ df_limites=pd.DataFrame(datos_limites)
 df_limites
 
 # %%
+#etiquetas = df_limites['valor_asignado'][:-1]
 etiquetas = df_limites['valor_asignado'][:-1]
+etiquetas
+
+# %% [markdown]
+# ### Añadimos la columna escala a todas las tablas
+
+# %%
+datos_horarios['escala']=pd.cut(datos_horarios['value'],bins=df_limites['rango'],labels=etiquetas,right=True)
+#datos_horarios['escala']=pd.cut(datos_horarios['value'],bins=df_limites['rango'],labels=etiquetas)
+#datos_horarios['escala']=pd.cut(datos_horarios['value'],bins=df_limites['rango'],labels=df_limites['valor_asignado'],right=False)
+datos_horarios
+
+# %%
+lista_escala=datos_horarios['escala'].unique()
+lista_escala
 
 # %%
 datos_dia['escala']=pd.cut(datos_dia['value'],bins=df_limites['rango'],labels=etiquetas,right=False)
@@ -143,12 +176,39 @@ colores = {
     'medio': 'blue',
     'alto': 'orange',
     'muy alto': 'red',
-    'chungo': 'purple'
+    'chungo': 'purple',
+    'xtrem':'black'
 }
+
+# %%
+datos_horarios['color']=datos_horarios['escala'].map(colores)
+datos_horarios
 
 # %%
 datos_dia['color']=datos_dia['escala'].map(colores)
 datos_dia
+
+# %% [markdown]
+# ### Obtenemos la escala ordenada al revés para el gráfico horario
+
+# %%
+valor_asignado_a_rango = {row['valor_asignado']: row['rango'] for _, row in df_limites.iterrows()}
+
+# %%
+escala_horaria=['alto', 'medio', 'bajo', 'muy bajo', 'muy alto', 'chungo']
+escala_horaria
+
+# %%
+escala_ordenada_hora = sorted(escala_horaria, key=lambda x: valor_asignado_a_rango[x], reverse=True)
+escala_ordenada_hora
+
+# %%
+datos_horarios['color']=datos_horarios['escala'].map(colores)
+datos_horarios
+
+# %%
+datos_horarios['escala']=pd.Categorical(datos_horarios['escala'],categories=escala_ordenada_hora, ordered=True)
+datos_horarios
 
 # %% [markdown]
 # ### Obtenemos la escala ordenada al reves para el gráfico diario
@@ -156,9 +216,6 @@ datos_dia
 # %%
 escala_dia=datos_dia['escala'].unique()
 escala_dia
-
-# %%
-valor_asignado_a_rango = {row['valor_asignado']: row['rango'] for _, row in df_limites.iterrows()}
 
 # %%
 escala_ordenada_dia = sorted(escala_dia, key=lambda x: valor_asignado_a_rango[x], reverse=True)
@@ -261,17 +318,7 @@ def graf_ecv_anual_queso():
         title="% y número de días según la Escala CV. Año 2024",
         width=500
         )
-    #graf_ecv_anual_queso.update_traces(hoverlabel=dict(font_color='white', bgcolor='blue'))
-    #graf_ecv_anual.update_xaxes(
-        #tickmode='array',
-        #tickvals=pd.date_range(start='2024-01-01', periods=20, freq='MS'),  # Marcas mensuales
-        #ticktext=['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-    #    showgrid=True
-    #)
-    #graf_ecv_anual.update_traces(
-    #    marker_line_width=0
-    #)
-
+    
     return graf_ecv_anual_queso
 
 # %%
@@ -279,9 +326,6 @@ graf_ecv_anual_queso()
 
 # %% [markdown]
 # ### Gráfica horaria anual
-
-# %%
-datos
 
 # %%
 pt_curva_horaria=datos.pivot_table(
@@ -296,12 +340,35 @@ pt_curva_horaria=pt_curva_horaria.reset_index()
 pt_curva_horaria
 
 # %%
+datos_horarios
+
+# %%
 def graf_horaria():
-    graf_horaria=px.line(pt_curva_horaria,x='hora',y='value',
-                     title="Precios medios horarios",
-                     labels={'value': '€/MWh'},
-                     width=800
+    graf_horaria=px.scatter(datos_horarios, x='hora',y='value',
+        title='Perfil horario. Año 2024',                            
+        animation_frame='fecha',
+        width=800,
+        labels={'value':'€/MWh'}
+        #category_orders={'escala':escala_ordenada_hora},
+        #color_discrete_map=colores
+        #marker_size=10
     )
+                           
+    graf_horaria_linea=go.Scatter(
+        x=pt_curva_horaria['hora'],
+        y=pt_curva_horaria['value'],
+        #color=["blue"],
+        name='Media Anual',
+        mode='lines',
+        
+    )
+     
+    graf_horaria.add_trace(graf_horaria_linea)
+        
+    graf_horaria.update_layout(
+        yaxis=dict(range=[datos_horarios['value'].min(), datos_horarios['value'].max()])
+    )
+    
     return graf_horaria
 graf_horaria()
 
@@ -321,9 +388,9 @@ datos_filtrados
 # %%
 datos_filtrados.dtypes
 
-# %%
-datos_filtrados_dia=datos_filtrados.resample('D').mean()
-datos_filtrados_dia
+# %% [markdown]
+# datos_filtrados_dia=datos_filtrados.resample('D').mean()
+# datos_filtrados_dia
 
 # %%
 
@@ -331,14 +398,14 @@ datos_filtrados_dia
 # %%
 
 
-# %%
-def graf_dia():
-    graf_dia=px.line(datos_filtrados_dia,x='fecha',y='value')
-    
-    return graf_dia
+# %% [markdown]
+# def graf_dia():
+#     graf_dia=px.line(datos_filtrados_dia,x='fecha',y='value')
+#     
+#     return graf_dia
 
-# %%
-graf_dia()
+# %% [markdown]
+# graf_dia()
 
 # %%
 
