@@ -4,15 +4,23 @@ from backend import graf_ecv_anual, graf_ecv_anual_queso, graf_ecv_mensual, graf
 #pg = st.navigation([st.Page("escalacv.py"), st.Page("pages/page_1.py")])
 #pg.run()
 
+#token=st.secrets['ESIOS_API_KEY']
+
+
 st.set_page_config(
     page_title="Escala Cavero Vidal",
     page_icon=":bulb:",
     layout='wide',
 )
+
+#st.write(tokens)
 st.title('Escala Cavero-Vidal :copyright:')
 st.caption("Basada en los #telepool de Roberto Cavero. Copyright by Jose Vidal :ok_hand:")
 url_apps = "https://powerappspy-josevidal.streamlit.app/"
 st.write("Visita mi página de [PowerAPPs](%s) con un montón de utilidades" % url_apps)
+
+if st.button("Actualizar"):
+    st.rerun()
 
 st.plotly_chart(graf_ecv_anual())
 

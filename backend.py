@@ -3,12 +3,19 @@ import requests
 import pandas as pd
 import plotly.express as px
 import datetime
+from datetime import datetime
 import numpy as np
+import streamlit as st
 import plotly.graph_objects as go
+#import globals
+
+# %%
+#token=globals.API_KEY
 
 # %%
 def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
                        token = '496b263791ef0dcaf80b803b47b332a13b01f2c2352e018b624c7a36a0eaffc0'
+                       #token = API_KEY
                        cab = dict()
                        cab ['x-api-key']= token
                        url_id = 'https://api.esios.ree.es/indicators'
@@ -52,6 +59,9 @@ datos = (datos
 datos
 
 # %%
+datos.dtypes
+
+# %%
 meses = {
     'January': 'Enero',
     'February': 'Febrero',
@@ -71,17 +81,31 @@ meses = {
 # ### Esta es la tabla de valores horarios tratada
 
 # %%
-datos['fecha']=datos['datetime'].dt.strftime('%d/%m/%Y')
-datos['fecha']=pd.to_datetime(datos['fecha'],format='%d/%m/%Y')
+#datos['fecha']=datos['datetime'].dt.strftime('%d/%m/%Y')
+#datos['fecha']=pd.to_datetime(datos['fecha'],format='%d/%m/%Y')
+datos['fecha']=datos['datetime'].dt.date
+#datos['fecha']=pd.to_datetime(datos['fecha']).dt.date
 datos['hora']=datos['datetime'].dt.hour
 datos['dia']=datos['datetime'].dt.day
 datos['mes']=datos['datetime'].dt.month
 datos['año']=datos['datetime'].dt.year
-#datos['mes_nombre']=datos['datetime'].dt.month_name()
-#datos['mes_nombre'] = datos['mes_nombre'].map(meses)
-
 datos.set_index('datetime', inplace=True)
 datos
+
+# %%
+datos.dtypes
+
+# %%
+ultimo_registro= datos['fecha'].max()
+ultimo_registro
+
+# %%
+fecha_hoy=datetime.today().date()
+fecha_hoy
+
+# %%
+if fecha_hoy>ultimo_registro:
+    st.rerun()
 
 # %%
 valor_minimo_horario=datos['value'].min()
@@ -96,16 +120,30 @@ datos_horarios=datos
 datos_horarios
 
 
+# %%
+datos_horarios.dtypes
+
 # %% [markdown]
 # ### Agrupación por días
 
 # %%
+datos_dias=datos.reset_index()
+datos_dias
 
-datos_dia=datos.resample('D').mean()
+# %%
+datos_dia=datos.drop(columns=['hora'])
+datos_dia['fecha']=pd.to_datetime(datos['fecha'],format='%d/%m/%Y')
+#datos_dia['fecha']=datos_dia['fecha'].dt.strftime('%d/%m/%Y')
+
+
+datos_dia=datos_dia.resample('D').mean()
 datos_dia['value']=datos_dia['value'].round(2)
-datos_dia=datos_dia.drop(columns=['hora'])
+
 datos_dia[['dia','mes','año']]=datos_dia[['dia','mes','año']].astype(int)
-datos_dia
+
+
+# %%
+datos_dia.dtypes
 
 # %%
 valor_minimo_diario=datos_dia['value'].min()
@@ -116,16 +154,15 @@ valor_minimo_diario,valor_maximo_diario
 # ### Agrupación por meses
 
 # %%
-datos_mes=datos.resample('M').mean()
+datos
+
+# %%
+datos_mes=datos.drop(columns=['fecha','hora', 'dia'])
+datos_mes=datos_mes.resample('M').mean()
 datos_mes['value']=datos_mes['value'].round(2)
-datos_mes=datos_mes.drop(columns=['fecha','hora', 'dia'])
+
 datos_mes[['mes','año']]=datos_mes[['mes','año']].astype(int)
 datos_mes
-
-# %% [markdown]
-# def graf_año():
-#     graf_año=px.line(datos_dia, x='fecha', y='value')
-#     return graf_año
 
 # %% [markdown]
 # ### Definimos la escala y sus límites
@@ -264,6 +301,15 @@ datos_dia_queso
 # ### Gráfico de barras principal
 
 # %%
+#datos_dia.reset_index()
+#datos_dia.rename(columns={'datetime','fecha'},inplace=True)
+datos_dia
+#datos_dia['datetime'].rename['fecha']
+
+# %%
+datos_dia.dtypes
+
+# %%
 def graf_ecv_anual():
     graf_ecv_anual=px.bar(datos_dia, x='fecha', y='value', 
         color='escala',
@@ -366,11 +412,16 @@ def graf_horaria():
     graf_horaria.add_trace(graf_horaria_linea)
         
     graf_horaria.update_layout(
-        yaxis=dict(range=[datos_horarios['value'].min(), datos_horarios['value'].max()])
+        yaxis=dict(
+            range=[datos_horarios['value'].min(), datos_horarios['value'].max()]),
+            #dtick=10
     )
     
     return graf_horaria
 graf_horaria()
+
+# %%
+datos_horarios['value'].min()
 
 # %%
 mes=1
