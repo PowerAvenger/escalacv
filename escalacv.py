@@ -1,5 +1,5 @@
 import streamlit as st
-from backend import graf_ecv_anual, graf_ecv_anual_queso, graf_ecv_mensual, graf_horaria
+from backend import graf_ecv_anual, graf_ecv_anual_queso, graf_ecv_mensual, graf_horaria,download_esios_id
 
 #pg = st.navigation([st.Page("escalacv.py"), st.Page("pages/page_1.py")])
 #pg.run()
@@ -20,7 +20,8 @@ url_apps = "https://powerappspy-josevidal.streamlit.app/"
 st.write("Visita mi página de [PowerAPPs](%s) con un montón de utilidades" % url_apps)
 
 if st.button("Actualizar"):
-    st.rerun()
+    st.experimental_rerun()
+    
 
 st.plotly_chart(graf_ecv_anual())
 
