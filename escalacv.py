@@ -19,8 +19,8 @@ st.caption("Basada en los #telepool de Roberto Cavero. Copyright by Jose Vidal :
 url_apps = "https://powerappspy-josevidal.streamlit.app/"
 st.write("Visita mi página de [PowerAPPs](%s) con un montón de utilidades" % url_apps)
 
-if st.button("Actualizar"):
-    st.experimental_rerun()
+#if st.button("Actualizar"):
+#    st.experimental_rerun()
     
 
 st.plotly_chart(graf_ecv_anual())
