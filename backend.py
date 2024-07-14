@@ -6,8 +6,9 @@ import datetime
 from datetime import datetime
 import numpy as np
 import streamlit as st
+import time 
 import plotly.graph_objects as go
-#import globals
+
 
 # %%
 #token=globals.API_KEY
@@ -22,9 +23,9 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
                        url=f'{url_id}/{id}?geo_ids[]=3&start_date={fecha_ini}T00:00:00&end_date={fecha_fin}T23:59:59&time_trunc={agrupacion}'
                        print(url)
                        response = requests.get(url, headers=cab).json()
-                       
+                       fecha_descarga=datetime.now()
 
-                       return response
+                       return response,fecha_descarga
                        
 
 # %%
@@ -34,12 +35,15 @@ fecha_fin='2024-12-31'
 agrupacion='hour'
 
 # %%
-datos_origen =download_esios_id(id,fecha_ini,fecha_fin,agrupacion)
+datos_origen,fecha_descarga =download_esios_id(id,fecha_ini,fecha_fin,agrupacion)
 
 
 # %%
 datos=pd.DataFrame(datos_origen['indicator']['values'])
 datos
+
+# %%
+fecha_descarga
 
 # %%
 datos = (datos
@@ -104,10 +108,6 @@ fecha_hoy=datetime.today().date()
 fecha_hoy
 
 # %%
-if fecha_hoy>ultimo_registro:
-    st.rerun()
-
-# %%
 valor_minimo_horario=datos['value'].min()
 valor_maximo_diario=datos['value'].max()
 valor_minimo_horario,valor_maximo_diario
@@ -146,9 +146,26 @@ datos_dia[['dia','mes','año']]=datos_dia[['dia','mes','año']].astype(int)
 datos_dia.dtypes
 
 # %%
-valor_minimo_diario=datos_dia['value'].min()
-valor_maximo_diario=datos_dia['value'].max()
-valor_minimo_diario,valor_maximo_diario
+def obtener_valores_diarios():
+    valor_medio_diario=round(datos_dia['value'].mean(),2)
+    valor_minimo_diario=datos_dia['value'].min()
+    valor_maximo_diario=datos_dia['value'].max()
+    
+    return valor_medio_diario,valor_minimo_diario,valor_maximo_diario
+
+# %%
+valor_medio_diario,valor_minimo_diario,valor_maximo_diario=obtener_valores_diarios()
+valor_medio_diario,valor_minimo_diario,valor_maximo_diario
+
+# %%
+def fechas_minmax():
+    indice_min = datos_dia['value'].idxmin().date()
+    indice_max = datos_dia['value'].idxmax().date()
+    return indice_min,indice_max
+
+# %%
+indice_min,indice_max=fechas_minmax()
+indice_min,indice_max
 
 # %% [markdown]
 # ### Agrupación por meses
@@ -393,6 +410,8 @@ def graf_horaria():
     graf_horaria=px.scatter(datos_horarios, x='hora',y='value',
         title='Perfil horario. Año 2024',                            
         animation_frame='fecha',
+        
+        
         width=800,
         labels={'value':'€/MWh'}
         #category_orders={'escala':escala_ordenada_hora},
@@ -414,7 +433,8 @@ def graf_horaria():
     graf_horaria.update_layout(
         yaxis=dict(
             range=[datos_horarios['value'].min(), datos_horarios['value'].max()]),
-            #dtick=10
+           
+        
     )
     
     return graf_horaria
