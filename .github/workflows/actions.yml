@@ -2,7 +2,7 @@ name: run escalacv.py
 
 on:
   schedule:
-    - cron: '10 14 * * *' # Actualiza a las 14:10 UTC todos los dias
+    - cron: '10 * * * *' # Actualiza a las 14:10 UTC todos los dias
   
 jobs:
   build:
