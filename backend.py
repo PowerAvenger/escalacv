@@ -100,8 +100,9 @@ datos
 datos.dtypes
 
 # %%
-ultimo_registro= datos['fecha'].max()
-ultimo_registro
+def ultimo_registro():
+    ultimo_registro= datos['fecha'].max()
+    return ultimo_registro
 
 # %%
 fecha_hoy=datetime.today().date()
