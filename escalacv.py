@@ -40,12 +40,12 @@ valor_medio_diario,valor_minimo_diario,valor_maximo_diario=obtener_valores_diari
 fecha_min,fecha_max=fechas_minmax()
 
 with st.container():
-    col1,col2=st.columns([0.85,0.15])
+    col1,col2=st.columns([0.80,0.20])
     with col1:
         st.plotly_chart(graf_ecv_anual())
     with col2:
         st.subheader('Datos en €/MWh',divider='rainbow')
-        st.metric('Precio medio diario', value=valor_medio_diario)
+        st.metric('Precio medio diario 2024', value=valor_medio_diario)
         st.metric(f'Precio mínimo diario ( {fecha_min})', value=valor_minimo_diario)
         st.metric(f'Precio máximo diario ({fecha_max})', value=valor_maximo_diario)
 #with st.container():
