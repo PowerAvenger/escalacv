@@ -11,12 +11,13 @@ import plotly.graph_objects as go
 
 
 # %%
-#token=globals.API_KEY
+API_KEY=st.secrets['ESIOS_API_KEY']
 
 # %%
+st.cache_data(ttl=300)
 def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
-                       token = '496b263791ef0dcaf80b803b47b332a13b01f2c2352e018b624c7a36a0eaffc0'
-                       #token = API_KEY
+                       #token = '496b263791ef0dcaf80b803b47b332a13b01f2c2352e018b624c7a36a0eaffc0'
+                       token = API_KEY
                        cab = dict()
                        cab ['x-api-key']= token
                        url_id = 'https://api.esios.ree.es/indicators'
@@ -43,7 +44,10 @@ datos=pd.DataFrame(datos_origen['indicator']['values'])
 datos
 
 # %%
-fecha_descarga
+def pasar_fecha():
+            
+   return fecha_descarga
+
 
 # %%
 datos = (datos

@@ -1,10 +1,9 @@
 import streamlit as st
-from backend import graf_ecv_anual, graf_ecv_anual_queso, graf_ecv_mensual, graf_horaria,obtener_valores_diarios,fechas_minmax,download_esios_id, ultimo_registro
+from backend import graf_ecv_anual, graf_ecv_anual_queso, graf_ecv_mensual, graf_horaria,obtener_valores_diarios,fechas_minmax,ultimo_registro,pasar_fecha
 import time
 import datetime
 from datetime import datetime
-#pg = st.navigation([st.Page("escalacv.py"), st.Page("pages/page_1.py")])
-#pg.run()
+
 
 #token=st.secrets['ESIOS_API_KEY']
 
@@ -15,21 +14,19 @@ st.set_page_config(
     layout='wide',
 )
 
-id='600'
-fecha_ini='2024-01-01'
-fecha_fin='2024-12-31'
-agrupacion='hour'
 
-if'contador' not in st.session_state:
-    st.session_state.contador=0
-    datos,fecha_descarga=download_esios_id(id,fecha_ini,fecha_fin,agrupacion)
+
+#if'contador' not in st.session_state:
+#    st.session_state.contador=0
+#    datos,fecha_descarga=download_esios_id(id,fecha_ini,fecha_fin,agrupacion)
     #st.write(fecha_descarga)
     
-    st.rerun()
+#    st.rerun()
 
 ultimo_registro=ultimo_registro()
-st.write(ultimo_registro)    
-
+st.write(ultimo_registro) 
+ultima_descarga=pasar_fecha()
+st.write(ultima_descarga)
 st.title('Escala Cavero-Vidal :copyright:')
 st.caption("Basada en los #telepool de Roberto Cavero. Copyright by Jose Vidal :ok_hand:")
 url_apps = "https://powerappspy-josevidal.streamlit.app/"
