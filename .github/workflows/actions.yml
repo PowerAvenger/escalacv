@@ -24,4 +24,4 @@ jobs:
       - name: execute backend.py script # run backend.py
         run: streamlit run backend.py #ANTES python backend.py
       - name: execute main.py script # run main.py
-        run: python escalacv.py
+        run: python escalacv.py #ANTES python backend.py
