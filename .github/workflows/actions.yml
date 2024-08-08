@@ -22,6 +22,6 @@ jobs:
           pip install -r requirements.txt
 
       - name: execute py script # run backend.py
-        run: python backend.py
+        run: streamlit run backend.py #ANTES python backend.py
       - name: execute py script # run main.py
         run: python escalacv.py
