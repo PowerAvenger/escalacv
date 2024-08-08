@@ -2,11 +2,15 @@ name: run escalacv.py
 
 on:
   schedule:
-    - cron: '10 * * * *' # Actualiza a las 14:10 UTC todos los dias
+    - cron: '30 * * * *' # Actualiza a las 14:10 UTC todos los dias
   
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      MY_APP_ID: ${{ secrets.TOKEN }}
+      
     steps:
       - name: checkout repo content
         uses: actions/checkout@v2 # checkout the repository content
