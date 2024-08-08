@@ -2,19 +2,14 @@
 import requests
 import pandas as pd
 import plotly.express as px
-import datetime
-from datetime import datetime
-import numpy as np
+import plotly.graph_objects as go 
 import streamlit as st
-import time 
-import plotly.graph_objects as go
-
+from datetime import datetime
 
 # %%
 API_KEY=st.secrets['ESIOS_API_KEY']
 
 # %%
-st.cache_data(ttl=300)
 def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
                        #token = '496b263791ef0dcaf80b803b47b332a13b01f2c2352e018b624c7a36a0eaffc0'
                        token = API_KEY
@@ -323,15 +318,6 @@ datos_dia_queso
 # ### Gráfico de barras principal
 
 # %%
-#datos_dia.reset_index()
-#datos_dia.rename(columns={'datetime','fecha'},inplace=True)
-datos_dia
-#datos_dia['datetime'].rename['fecha']
-
-# %%
-datos_dia.dtypes
-
-# %%
 def graf_ecv_anual():
     graf_ecv_anual=px.bar(datos_dia, x='fecha', y='value', 
         color='escala',
@@ -360,13 +346,7 @@ def graf_ecv_mensual():
         labels={'value':'precio medio mensual €/MWh', 'escala':'escala_cv'},
         title="Precios medios mensuales. Año 2024"
         )
-    #graf_ecv_mensual.update_xaxes(
-    #    showgrid=True
     
-    #graf_ecv_mensual.update_traces(
-    #   marker_line_width=0
-    #)
-
     return graf_ecv_mensual
 
 # %%
@@ -384,7 +364,7 @@ def graf_ecv_anual_queso():
         category_orders={'escala':escala_ordenada_dia},
         labels={'num_dias':'num_dias', 'escala':'escala_cv'},
         title="% y número de días según la Escala CV. Año 2024",
-        width=500
+        #width=500
         )
     
     return graf_ecv_anual_queso
@@ -447,43 +427,5 @@ graf_horaria()
 
 # %%
 datos_horarios['value'].min()
-
-# %%
-mes=1
-filtro_mes=datos['mes']==mes
-datos_filtrados=datos[filtro_mes]
-filtro_mes
-
-# %%
-datos_filtrados
-
-# %%
-#datos_filtrados.set_index('datetime', inplace=True)
-#datos_filtrados
-
-# %%
-datos_filtrados.dtypes
-
-# %% [markdown]
-# datos_filtrados_dia=datos_filtrados.resample('D').mean()
-# datos_filtrados_dia
-
-# %%
-
-
-# %%
-
-
-# %% [markdown]
-# def graf_dia():
-#     graf_dia=px.line(datos_filtrados_dia,x='fecha',y='value')
-#     
-#     return graf_dia
-
-# %% [markdown]
-# graf_dia()
-
-# %%
-
 
 
