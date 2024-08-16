@@ -1,5 +1,5 @@
 import streamlit as st
-from backend import graf_ecv_anual, graf_ecv_anual_queso, graf_ecv_mensual, graf_horaria,obtener_valores_diarios,fechas_minmax,ultimo_registro,pasar_fecha
+from backend import graf_ecv_anual, graf_ecv_anual_queso, graf_ecv_mensual, graf_horaria,obtener_valores_diarios,fechas_minmax,ultimo_registro,pasar_fecha,var_api,download_esios_id
 import time
 import datetime
 from datetime import datetime
@@ -10,10 +10,21 @@ st.set_page_config(
     layout='wide',
 )
 
+if st.button('Actualizar'):
+    #st.cache_data.clear()
+    id,fecha_ini,fecha_fin,agrupacion=var_api()
+    datos_origen,fecha_descarga =download_esios_id(id,fecha_ini,fecha_fin,agrupacion)
+    st.write(fecha_descarga)
+    
 ultimo_registro=ultimo_registro()
 st.write(ultimo_registro) 
-ultima_descarga=pasar_fecha()
-st.write(ultima_descarga)
+#   fecha_descarga=pasar_fecha()
+    #st.write(ultima_descarga)
+
+
+
+
+
 st.title('Escala Cavero-Vidal :copyright:')
 st.caption("Basada en los #telepool de Roberto Cavero. Copyright by Jose Vidal :ok_hand:")
 url_apps = "https://powerappspy-josevidal.streamlit.app/"

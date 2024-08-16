@@ -10,6 +10,7 @@ from datetime import datetime
 API_KEY=st.secrets['ESIOS_API_KEY']
 
 # %%
+@st.cache_data(ttl=60)
 def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
                        
                        token = API_KEY
@@ -25,10 +26,14 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
                        
 
 # %%
-id='600'
-fecha_ini='2024-01-01'
-fecha_fin='2024-12-31'
-agrupacion='hour'
+def var_api():
+    id='600'
+    fecha_ini='2024-01-01'
+    fecha_fin='2024-12-31'
+    agrupacion='hour'
+    return id,fecha_ini,fecha_fin,agrupacion
+
+id,fecha_ini,fecha_fin,agrupacion=var_api()
 
 # %%
 datos_origen,fecha_descarga =download_esios_id(id,fecha_ini,fecha_fin,agrupacion)
