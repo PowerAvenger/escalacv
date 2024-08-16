@@ -2,7 +2,7 @@ name: run escalacv.py
 
 on:
   schedule:
-    - cron: '30 * * * *' # Actualiza a y media cada hora
+    - cron: '5 * * * *' # Actualiza a y media cada hora
   
 jobs:
   build:
