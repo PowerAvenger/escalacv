@@ -25,7 +25,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      #- name: execute backend.py script # run backend.py
-      #  run: streamlit run backend.py #ANTES python backend.py
+      - name: token secret
+        with:
+          super_secret: ${{ secrets.TOKEN }}
+          
+      
       - name: execute main.py script # run main.py
         run: python escalacv.py #ANTES python backend.py
