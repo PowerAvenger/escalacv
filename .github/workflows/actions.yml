@@ -28,7 +28,7 @@ jobs:
       - name: token secret
         with:
           super_secret: ${{ secrets.TOKEN }}
-          
+          run: python escalacv.py #ANTES python backend.py
       
-      - name: execute main.py script # run main.py
-        run: python escalacv.py #ANTES python backend.py
+      #- name: execute main.py script # run main.py
+      #  run: python escalacv.py #ANTES python backend.py
