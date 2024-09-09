@@ -2,14 +2,14 @@ name: run escalacv.py
 
 on:
   schedule:
-    - cron: '30 * * * *' # Actualiza a y media cada hora
+    - cron: '15 * * * *' # Actualiza a y cuarto de cada hora
   
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    #env:
-    #  MY_APP_ID: ${{ secrets.TOKEN }}
+    env:
+      MY_APP_ID: ${{ secrets.TOKEN }}
       
     steps:
       - name: checkout repo content
@@ -25,7 +25,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      #- name: execute backend.py script # run backend.py
-      #  run: streamlit run backend.py #ANTES python backend.py
+      #- name: token secret
+       # with:
+        #  super_secret: ${{ secrets.TOKEN }}
+         # run: python escalacv.py #ANTES python backend.py
+      
       - name: execute main.py script # run main.py
         run: python escalacv.py #ANTES python backend.py
