@@ -121,6 +121,7 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
         title={'x':0.5,'xanchor':'center'}
     )
     
+    #grafico de quesitos
     graf_ecv_anual_queso=px.pie(datos_dia_queso, values='num_dias', names='escala',
         color='escala',
         color_discrete_map=colores,
@@ -131,7 +132,11 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
         #width=500
         )
     graf_ecv_anual_queso.update_layout(
-        title={'x':0.5,'xanchor':'center'}
+        title={'x':0.5,'xanchor':'center'},
+        legend=dict(
+            x=0.8,
+            xanchor='left'
+        )
     )
 
     #datos para el gráfico de medias horarias
@@ -177,101 +182,17 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
     return datos, datos_dia, datos_mes, graf_ecv_anual, graf_ecv_anual_queso, graf_ecv_mensual, graf_horaria
                        
 
-# %% [markdown]
-# ### Gráfico de barras principal
-
-# %% [markdown]
-# def graf_ecv_anual():
-#     graf_ecv_anual=px.bar(datos_dia, x='fecha', y='value', 
-#         color='escala',
-#         color_discrete_map=colores,
-#         category_orders={'escala':escala_ordenada_dia},
-#         labels={'value':'precio medio diario €/MWh', 'escala':'escala_cv'},
-#         title="Precios medios del mercado diario OMIE. Año 2024")
-#     graf_ecv_anual.update_xaxes(
-#         showgrid=True
-#     )
-#     graf_ecv_anual.update_traces(
-#         marker_line_width=0
-#     )
-# 
-#     return graf_ecv_anual
-
-# %% [markdown]
-# def graf_ecv_mensual():
-#     graf_ecv_mensual=px.bar(datos_mes, x='mes', y='value',
-#         color='escala',
-#         color_discrete_map=colores,
-#         category_orders={'escala':escala_ordenada_mes},
-#         labels={'value':'precio medio mensual €/MWh', 'escala':'escala_cv'},
-#         title="Precios medios mensuales. Año 2024"
-#         )
-#     
-#     return graf_ecv_mensual
-
-# %% [markdown]
-# ### Gráfico de queso
-
-# %% [markdown]
-# def graf_ecv_anual_queso():
-#     graf_ecv_anual_queso=px.pie(datos_dia_queso, values='num_dias', names='escala',
-#         color='escala',
-#         color_discrete_map=colores,
-#         #marker=dict(colors=colores),
-#         category_orders={'escala':escala_ordenada_dia},
-#         labels={'num_dias':'num_dias', 'escala':'escala_cv'},
-#         title="% y número de días según la Escala CV. Año 2024",
-#         #width=500
-#         )
-#     
-#     return graf_ecv_anual_queso
-
-# %% [markdown]
-# graf_ecv_anual_queso()
-
-# %% [markdown]
-# ### Gráfica horaria anual
-
-# %% [markdown]
-# def graf_horaria():
-#     graf_horaria=px.scatter(datos_horarios, x='hora',y='value',
-#         title='Perfil horario. Año 2024',                            
-#         animation_frame='fecha',
-#         
-#         
-#         width=800,
-#         labels={'value':'€/MWh'}
-#         #category_orders={'escala':escala_ordenada_hora},
-#         #color_discrete_map=colores
-#         #marker_size=10
-#     )
-#                            
-#     graf_horaria_linea=go.Scatter(
-#         x=pt_curva_horaria['hora'],
-#         y=pt_curva_horaria['value'],
-#         #color=["blue"],
-#         name='Media Anual',
-#         mode='lines',
-#         
-#     )
-#      
-#     graf_horaria.add_trace(graf_horaria_linea)
-#         
-#     graf_horaria.update_layout(
-#         yaxis=dict(
-#             range=[datos_horarios['value'].min(), datos_horarios['value'].max()]),
-#            
-#         
-#     )
-#     
-#     return graf_horaria
-# graf_horaria()
-
-# %% [markdown]
-# datos_horarios['value'].min()
+# %%
+id='600'
+fecha_ini='2024-01-01'
+fecha_fin='2024-12-31'
+agrupacion='hour'
 
 # %%
+datos, datos_dia, datos_mes, graf_ecv_anual, graf_ecv_anual_queso, graf_ecv_mensual, graf_horaria=download_esios_id(id,fecha_ini,fecha_fin,agrupacion)
 
+# %%
+graf_ecv_anual_queso
 
 # %%
 meses = {

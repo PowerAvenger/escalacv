@@ -34,7 +34,6 @@ valor_maximo_diario=datos_dia['value'].max()
 fecha_min = datos_dia['value'].idxmin().date()
 fecha_max = datos_dia['value'].idxmax().date()
 
-#st.write(fecha_descarga)
     
 
 st.write(ultimo_registro) 
@@ -49,11 +48,9 @@ st.caption("Basada en los #telepool de Roberto Cavero. Copyright by Jose Vidal :
 url_apps = "https://powerappspy-josevidal.streamlit.app/"
 st.write("Visita mi página de [PowerAPPs](%s) con un montón de utilidades" % url_apps)
 
-#valor_medio_diario,valor_minimo_diario,valor_maximo_diario=obtener_valores_diarios()
-#fecha_min,fecha_max=fechas_minmax()
 
 with st.container():
-    col1,col2=st.columns([0.80,0.20])
+    col1,col2,col3=st.columns([0.7,0.1,0.2])
     with col1:
         st.plotly_chart(graf_ecv_anual)
     with col2:
@@ -61,11 +58,12 @@ with st.container():
         st.metric('Precio medio diario 2024', value=valor_medio_diario)
         st.metric(f'Precio mínimo diario ( {fecha_min})', value=valor_minimo_diario)
         st.metric(f'Precio máximo diario ({fecha_max})', value=valor_maximo_diario)
+    with col3:
+        st.plotly_chart(graf_ecv_anual_queso)
 
-col5,col6,col7=st.columns([.25,.4,.35])
+col5,col6,col7=st.columns([.4,.35,.25])
+
 with col5:
-    st.plotly_chart(graf_ecv_anual_queso)
-with col6:
     st.plotly_chart(graf_ecv_mensual)
-with col7:
+with col6:
     st.plotly_chart(graf_horaria)
