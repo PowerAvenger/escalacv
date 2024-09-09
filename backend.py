@@ -133,10 +133,10 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
         )
     graf_ecv_anual_queso.update_layout(
         title={'x':0.5,'xanchor':'center'},
-        legend=dict(
-            x=0.8,
-            xanchor='left'
-        )
+        #legend=dict(
+        #    x=0.6,
+        #    xanchor='left'
+        #)
     )
 
     #datos para el gráfico de medias horarias
