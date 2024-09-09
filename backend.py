@@ -133,6 +133,7 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
         )
     graf_ecv_anual_queso.update_layout(
         title={'x':0.5,'xanchor':'center'},
+        
         #legend=dict(
         #    x=0.6,
         #    xanchor='left'
@@ -174,8 +175,18 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
     graf_horaria.update_layout(
         yaxis=dict(
             range=[datos_horarios['value'].min(), datos_horarios['value'].max()]),
-        title={'x':0.5,'xanchor':'center'}
-    )
+        title={'x':0.5,'xanchor':'center'},
+        legend=dict(
+                orientation="h",  # Leyenda en horizontal
+                x=0.5,  # Posición horizontal centrada
+                xanchor="center",  # Alineación horizontal centrada
+                y=1,  # Colocarla ligeramente por encima del gráfico
+                yanchor="top",  # Alineación vertical en la parte inferior de la leyenda
+                
+                
+                
+            )
+        )
     
 
     
@@ -192,7 +203,8 @@ agrupacion='hour'
 datos, datos_dia, datos_mes, graf_ecv_anual, graf_ecv_anual_queso, graf_ecv_mensual, graf_horaria=download_esios_id(id,fecha_ini,fecha_fin,agrupacion)
 
 # %%
-graf_ecv_anual_queso
+graf_horaria
+
 
 # %%
 meses = {
