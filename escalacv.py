@@ -45,7 +45,7 @@ st.write(ultimo_registro)
 
 st.title('Escala Cavero-Vidal :copyright:')
 st.caption("Basada en los #telepool de Roberto Cavero. Copyright by Jose Vidal :ok_hand:")
-url_apps = "https://powerappspy-josevidal.streamlit.app/"
+url_apps = "https://epowerapps-by-josevidal.streamlit.app/"
 st.write("Visita mi página de [PowerAPPs](%s) con un montón de utilidades" % url_apps)
 
 
