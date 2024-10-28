@@ -4,9 +4,11 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go 
 import streamlit as st
+import numpy as np
 from datetime import datetime
 
 # %%
+@st.cache_data()
 def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
                        
     token = st.secrets['ESIOS_API_KEY']
@@ -36,22 +38,51 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
     datos['año']=datos['datetime'].dt.year
     datos.set_index('datetime', inplace=True)
     
+    #creamos df con las medias diarias
     datos_dia=datos.copy()
-    datos_dia=datos.reset_index()
+   
+    #datos_dia=datos.reset_index()
     datos_dia=datos.drop(columns=['hora'])
     datos_dia['fecha']=pd.to_datetime(datos['fecha'],format='%d/%m/%Y')
-    datos_dia=datos_dia.resample('D').mean()
+    meses_español = {1: "ene", 2: "feb", 3: "mar", 4: "abr", 5: "may", 6: "jun",
+                 7: "jul", 8: "ago", 9: "sep", 10: "oct", 11: "nov", 12: "dic"}
+    datos_dia['mes_nombre']=datos_dia['mes'].map(meses_español)
+    datos_dia=datos_dia.groupby('fecha').agg({
+        
+        'value':'mean',
+        'dia':'first',
+        'mes':'first',
+        'año':'first',
+        'mes_nombre':'first'
+
+    })
+    #datos_dia=datos_dia.resample('D').mean()
     datos_dia['value']=datos_dia['value'].round(2)
     datos_dia[['dia','mes','año']]=datos_dia[['dia','mes','año']].astype(int)
+    datos_dia.reset_index(inplace=True)
+    #print (datos_dia)
 
     
-    datos_mes=datos.copy()
-    datos_mes=datos.drop(columns=['fecha','hora', 'dia'])
-    datos_mes=datos_mes.resample('M').mean()
+    
+    #datos_mes=datos.copy()
+    datos_mes=datos_dia.copy()
+    datos_mes=datos_dia.drop(columns=['fecha', 'dia'])
+    
+    #datos_mes=datos_mes.resample('M').mean()
+    datos_mes=datos_mes.groupby('mes').agg({
+        'value':'mean',
+        'año':'first',
+        'mes_nombre':'first'
+    }).reset_index()
     datos_mes['value']=datos_mes['value'].round(2)
     datos_mes[['mes','año']]=datos_mes[['mes','año']].astype(int)
-
-
+    print(datos_mes)
+    media_mensual=round(datos_mes['value'].mean(),2)
+    #datos_mes=datos_mes.append({'mes_nombre':'media', 'value':media_mensual}, ignore_index=True)
+    df_fila_espacio = pd.DataFrame({'mes': [None], 'value': [0], 'año': [None], 'mes_nombre': ['']})
+    df_fila_media=pd.DataFrame({'mes': [13],'value':[media_mensual],'año':['2024'],'mes_nombre':['media']})
+    datos_mes=pd.concat([datos_mes, df_fila_espacio, df_fila_media], ignore_index=True)
+    print(datos_mes)
     datos_limites = {
         'rango': [-10,20.01,40.01,60.01,80.01,100.01,10000],
         'valor_asignado': ['muy bajo', 'bajo','medio','alto','muy alto','chungo','xtrem'],
@@ -88,11 +119,12 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
     escala_ordenada_mes = sorted(escala_mes, key=lambda x: valor_asignado_a_rango[x], reverse=True)
     datos_dia['escala']=pd.Categorical(datos_dia['escala'],categories=escala_ordenada_dia, ordered=True)
     datos_mes['escala']=pd.Categorical(datos_mes['escala'],categories=escala_ordenada_mes, ordered=True)
+    #print(datos_mes)
 
     datos_dia_queso=datos_dia.groupby(['escala'])['escala'].count()
     datos_dia_queso=datos_dia_queso.reset_index(name='num_dias')
 
-    #grafico principal con los valores diarios
+    #GRÁFICO PRINCIPAL CON LOS PRECIOS MEDIOS DIARIOS DEL AÑO. ecv es escala cavero vidal
     graf_ecv_anual=px.bar(datos_dia, x='fecha', y='value', 
         color='escala',
         color_discrete_map=colores,
@@ -106,26 +138,50 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
         marker_line_width=0
     )
     graf_ecv_anual.update_layout(
-        title={'x':0.5,'xanchor':'center'}
+        title={'x':0.5,'xanchor':'center'},
+        xaxis=dict(
+            rangeslider=dict(
+                visible=True,
+                bgcolor='rgba(173, 216, 230, 0.5)'
+            ),  
+            rangeselector=dict(
+                buttons=list([
+                    dict(count=1, label="1m", step="month", stepmode="backward"),
+                    dict(count=3, label="3m", step="month", stepmode="backward"),
+                    dict(step="all")  # Visualizar todos los datos
+                ]),
+            ),
+        )
     )
 
-    #gráfico resumen de medias mensuales
-    graf_ecv_mensual=px.bar(datos_mes, x='mes', y='value',
+    print(datos_mes)
+    #GRAFICO DE BARRAS CON MEDIAS MENSUALES
+    graf_ecv_mensual=px.bar(datos_mes, x='mes_nombre', y='value',
         color='escala',
         color_discrete_map=colores,
-        category_orders={'escala':escala_ordenada_mes},
-        labels={'value':'precio medio mensual €/MWh', 'escala':'escala_cv'},
+        #category_orders={'escala':escala_ordenada_mes},
+        category_orders={'mes_nombre':datos_mes['mes_nombre'],
+                         'escala':escala_ordenada_mes},
+        labels={'value':'€/MWh', 'escala':'escala_cv','mes_nombre':'mes'},
         title="Precios medios mensuales. Año 2024"
+
         )
     graf_ecv_mensual.update_layout(
         title={'x':0.5,'xanchor':'center'}
     )
+    graf_ecv_mensual.add_trace(go.Scatter(
+        x=datos_mes['mes_nombre'],
+        y=[media_mensual]*len(datos_mes),
+        mode='lines',
+        line=dict(color='grey',width=2, dash='dash'),
+        name='media'
+    ))
     
-    #grafico de quesitos
+    #GRÁFICO DE QUESITOS
     graf_ecv_anual_queso=px.pie(datos_dia_queso, values='num_dias', names='escala',
         color='escala',
         color_discrete_map=colores,
-        #marker=dict(colors=colores),
+        hole=.4,
         category_orders={'escala':escala_ordenada_dia},
         labels={'num_dias':'num_dias', 'escala':'escala_cv'},
         title="% y número de días según la Escala CV. Año 2024",
@@ -188,38 +244,39 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
             )
         )
     
+    #GRÁFICO DE LOS PRECIOS MEDIOS DIARIOS PERO CON DESGLOSE POR MESES
+    graf_ecv_anual_meses=px.bar(datos_dia, x='dia', y='value', 
+        color='escala',
+        color_discrete_map=colores,
+        category_orders={'escala':escala_ordenada_dia},
+        labels={'value':'€/MWh', 'escala':'escala_cv'},
+        title="Precios medios del mercado diario OMIE. Año 2024. Por meses.",
+        facet_col='mes_nombre',
+        facet_col_wrap=4
+        )
+    meses_ordenados = [
+    "enero", "febrero", "marzo", "abril", "mayo", "junio",
+    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+    ]
+    #for i, mes in enumerate(datos_dia['mes_nombre'].unique()):
+    #for i, mes in enumerate(meses_ordenados):
+    #    graf_ecv_anual_meses.layout.annotations[i]['text'] = mes  # Cambiar el texto del título
+
+    graf_ecv_anual_meses.update_xaxes(
+        showgrid=True,
+        #tickformat="%d",
+    )
+    graf_ecv_anual_meses.update_traces(
+        marker_line_width=0
+    )
+    graf_ecv_anual_meses.update_layout(
+        title={'x':0.5,'xanchor':'center'},
+        height=800
+        
+    )
+    
+    return datos, datos_dia, datos_mes, graf_ecv_anual, graf_ecv_anual_queso, graf_ecv_mensual, graf_horaria, graf_ecv_anual_meses
+
 
     
-    return datos, datos_dia, datos_mes, graf_ecv_anual, graf_ecv_anual_queso, graf_ecv_mensual, graf_horaria
-                       
-
-# %%
-id='600'
-fecha_ini='2024-01-01'
-fecha_fin='2024-12-31'
-agrupacion='hour'
-
-# %%
-datos, datos_dia, datos_mes, graf_ecv_anual, graf_ecv_anual_queso, graf_ecv_mensual, graf_horaria=download_esios_id(id,fecha_ini,fecha_fin,agrupacion)
-
-# %%
-graf_horaria
-
-
-# %%
-meses = {
-        'January': 'Enero',
-        'February': 'Febrero',
-        'March': 'Marzo',
-        'April': 'Abril',
-        'May': 'Mayo',
-        'June': 'Junio',
-        'July': 'Julio',
-        'August': 'Agosto',
-        'September': 'Septiembre',
-        'October': 'Octubre',
-        'November': 'Noviembre',
-        'December': 'Diciembre'
-    }
-
 

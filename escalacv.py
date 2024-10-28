@@ -21,7 +21,7 @@ fecha_ini='2024-01-01'
 fecha_fin='2024-12-31'
 agrupacion='hour'
 
-datos, datos_dia, datos_mes, graf_ecv_anual, graf_ecv_anual_queso, graf_ecv_mensual, graf_horaria =download_esios_id(id,fecha_ini,fecha_fin,agrupacion)
+datos, datos_dia, datos_mes, graf_ecv_anual, graf_ecv_anual_queso, graf_ecv_mensual, graf_horaria, graf_ecv_anual_meses =download_esios_id(id,fecha_ini,fecha_fin,agrupacion)
 
 ultimo_registro= datos['fecha'].max()
 valor_minimo_horario=datos['value'].min()
@@ -31,9 +31,10 @@ valor_medio_diario=round(datos_dia['value'].mean(),2)
 valor_minimo_diario=datos_dia['value'].min()
 valor_maximo_diario=datos_dia['value'].max()
 
-fecha_min = datos_dia['value'].idxmin().date()
-fecha_max = datos_dia['value'].idxmax().date()
-
+#fecha_min = datos_dia['value'].idxmin().date()
+fecha_min = datos_dia.loc[datos_dia['value'].idxmin(), 'fecha'].date()
+#fecha_max = datos_dia['value'].idxmax().date()
+fecha_max = datos_dia.loc[datos_dia['value'].idxmax(), 'fecha'].date()
     
 
 st.write(ultimo_registro) 
@@ -46,7 +47,7 @@ st.write(ultimo_registro)
 st.title('Escala Cavero-Vidal :copyright:')
 st.caption("Basada en los #telepool de Roberto Cavero. Copyright by Jose Vidal :ok_hand:")
 url_apps = "https://epowerapps-by-josevidal.streamlit.app/"
-st.write("Visita mi página de [PowerAPPs](%s) con un montón de utilidades" % url_apps)
+st.write("Visita mi página de [ePowerAPPs](%s) con un montón de utilidades" % url_apps)
 
 
 with st.container():
@@ -67,3 +68,6 @@ with col5:
     st.plotly_chart(graf_ecv_mensual)
 with col6:
     st.plotly_chart(graf_horaria)
+
+st.plotly_chart(graf_ecv_anual_meses)
+#st.write(datos_dia)
