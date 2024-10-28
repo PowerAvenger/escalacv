@@ -1,4 +1,5 @@
 import streamlit as st
+#from streamlit_plotly_events import plotly_events
 from backend import download_esios_id
 import time
 import datetime
@@ -69,5 +70,9 @@ with col5:
 with col6:
     st.plotly_chart(graf_horaria)
 
+
+# Detección de clic en el gráfico de facetas
+#evento=st.plotly_chart(graf_ecv_anual_meses, use_container_width=True, on_select='rerun') #selection_mode='points'
+#evento=plotly_events(graf_ecv_anual_meses)
+#evento.selection
 st.plotly_chart(graf_ecv_anual_meses)
-#st.write(datos_dia)
