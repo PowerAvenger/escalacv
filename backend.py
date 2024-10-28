@@ -155,6 +155,7 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
     )
 
     print(datos_mes)
+
     #GRAFICO DE BARRAS CON MEDIAS MENSUALES
     graf_ecv_mensual=px.bar(datos_mes, x='mes_nombre', y='value',
         color='escala',
@@ -163,7 +164,8 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
         category_orders={'mes_nombre':datos_mes['mes_nombre'],
                          'escala':escala_ordenada_mes},
         labels={'value':'€/MWh', 'escala':'escala_cv','mes_nombre':'mes'},
-        title="Precios medios mensuales. Año 2024"
+        title="Precios medios mensuales. Año 2024",
+        text='value'
 
         )
     graf_ecv_mensual.update_layout(
@@ -253,14 +255,16 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
         title="Precios medios del mercado diario OMIE. Año 2024. Por meses.",
         facet_col='mes_nombre',
         facet_col_wrap=4
+
+
         )
+    # Configurar layout y eliminar prefijos en títulos de facetas
+    graf_ecv_anual_meses.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
     meses_ordenados = [
     "enero", "febrero", "marzo", "abril", "mayo", "junio",
     "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
     ]
-    #for i, mes in enumerate(datos_dia['mes_nombre'].unique()):
-    #for i, mes in enumerate(meses_ordenados):
-    #    graf_ecv_anual_meses.layout.annotations[i]['text'] = mes  # Cambiar el texto del título
+    
 
     graf_ecv_anual_meses.update_xaxes(
         showgrid=True,
