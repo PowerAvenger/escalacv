@@ -77,15 +77,19 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
     datos_mes['value']=datos_mes['value'].round(2)
     datos_mes[['mes','año']]=datos_mes[['mes','año']].astype(int)
     print(datos_mes)
-    media_mensual=round(datos_mes['value'].mean(),2)
+    media_mensual=round(datos_dia['value'].mean(),2)
     #datos_mes=datos_mes.append({'mes_nombre':'media', 'value':media_mensual}, ignore_index=True)
     df_fila_espacio = pd.DataFrame({'mes': [None], 'value': [0], 'año': [None], 'mes_nombre': ['']})
     df_fila_media=pd.DataFrame({'mes': [13],'value':[media_mensual],'año':['2024'],'mes_nombre':['media']})
     datos_mes=pd.concat([datos_mes, df_fila_espacio, df_fila_media], ignore_index=True)
     print(datos_mes)
+    #datos_limites = {
+    #    'rango': [-10,20.01,40.01,60.01,80.01,100.01,10000], # 7 elementos
+    #    'valor_asignado': ['muy bajo', 'bajo','medio','alto','muy alto','chungo','xtrem'], # 7 elemenos
+    #}
     datos_limites = {
-        'rango': [-10,20.01,40.01,60.01,80.01,100.01,10000],
-        'valor_asignado': ['muy bajo', 'bajo','medio','alto','muy alto','chungo','xtrem'],
+        'rango': [-10, 20.01, 40.01, 60.01, 80.01, 100.01, 120.01, 140.01, 10000], #9 elementos
+        'valor_asignado': ['muy bajo', 'bajo', 'medio', 'alto', 'muy alto', 'chungo', 'xtrem', 'defcon1', 'defcon2'],
     }
     df_limites=pd.DataFrame(datos_limites)
     etiquetas = df_limites['valor_asignado'][:-1]
@@ -98,11 +102,18 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
     colores = {
         'muy bajo': 'lightgreen',
         'bajo': 'green',
-        'medio': 'blue',
-        'alto': 'orange',
-        'muy alto': 'red',
-        'chungo': 'purple',
-        'xtrem':'black'
+        #'medio': 'blue',
+        'medio': '#24d4ff',
+        #'alto': 'orange',
+        'alto': '#004280',
+        #'muy alto': 'red',
+        'muy alto': 'orange',
+        #'chungo': 'purple',
+        'chungo': 'red',
+        #'xtrem':'black',
+        'xtrem':'darkred',
+        'defcon1': 'purple',
+        'defcon2': 'purple',
     }
 
     datos_horarios['color']=datos_horarios['escala'].map(colores)
@@ -124,19 +135,23 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
     datos_dia_queso=datos_dia.groupby(['escala'])['escala'].count()
     datos_dia_queso=datos_dia_queso.reset_index(name='num_dias')
 
-    #GRÁFICO PRINCIPAL CON LOS PRECIOS MEDIOS DIARIOS DEL AÑO. ecv es escala cavero vidal
+    #GRÁFICO PRINCIPAL CON LOS PRECIOS MEDIOS DIARIOS DEL AÑO. ecv es escala cavero vidal-----------------------------------------------------------
     graf_ecv_anual=px.bar(datos_dia, x='fecha', y='value', 
         color='escala',
         color_discrete_map=colores,
         category_orders={'escala':escala_ordenada_dia},
         labels={'value':'precio medio diario €/MWh', 'escala':'escala_cv'},
         title="Precios medios del mercado diario OMIE. Año 2024")
+    
     graf_ecv_anual.update_xaxes(
         showgrid=True
     )
+
     graf_ecv_anual.update_traces(
         marker_line_width=0
     )
+
+    ymax=datos_dia['value'].max()
     graf_ecv_anual.update_layout(
         title={'x':0.5,'xanchor':'center'},
         xaxis=dict(
@@ -151,12 +166,22 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
                     dict(step="all")  # Visualizar todos los datos
                 ]),
             ),
-        )
+        ),
+        yaxis=dict(
+            range=[0, ymax],             # Forzar el rango del eje Y
+            tickmode="linear",            # Escala lineal
+            tick0=0,                      # Comenzar en 0
+            dtick=20                      # Incrementos de 20
+        ),
     )
+    graf_ecv_anual.update_xaxes(
+        showgrid=True
+    )
+    
 
     print(datos_mes)
 
-    #GRAFICO DE BARRAS CON MEDIAS MENSUALES
+    #GRAFICO DE BARRAS CON MEDIAS MENSUALES------------------------------------------------------------------------------------------------------------
     graf_ecv_mensual=px.bar(datos_mes, x='mes_nombre', y='value',
         color='escala',
         color_discrete_map=colores,
@@ -175,11 +200,11 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
         x=datos_mes['mes_nombre'],
         y=[media_mensual]*len(datos_mes),
         mode='lines',
-        line=dict(color='grey',width=2, dash='dash'),
+        line=dict(color='yellow',width=2, dash='dash'),
         name='media'
     ))
     
-    #GRÁFICO DE QUESITOS
+    #GRÁFICO DE QUESITOS------------------------------------------------------------------------------------------------------------------------------
     graf_ecv_anual_queso=px.pie(datos_dia_queso, values='num_dias', names='escala',
         color='escala',
         color_discrete_map=colores,
@@ -206,7 +231,7 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
     pt_curva_horaria=pt_curva_horaria['value'].round(2)
     pt_curva_horaria=pt_curva_horaria.reset_index()
 
-    #grafico con las medias horarias
+    #grafico con las medias horarias---------------------------------------------------------------------------------------------------------------
     graf_horaria=px.scatter(datos_horarios, x='hora',y='value',
         title='Perfil horario. Año 2024',                            
         animation_frame='fecha',
@@ -246,7 +271,7 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
             )
         )
     
-    #GRÁFICO DE LOS PRECIOS MEDIOS DIARIOS PERO CON DESGLOSE POR MESES
+    #GRÁFICO DE LOS PRECIOS MEDIOS DIARIOS PERO CON DESGLOSE POR MESES-----------------------------------------------------------------------
     graf_ecv_anual_meses=px.bar(datos_dia, x='dia', y='value', 
         color='escala',
         color_discrete_map=colores,
@@ -275,7 +300,13 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
     )
     graf_ecv_anual_meses.update_layout(
         title={'x':0.5,'xanchor':'center'},
-        height=800
+        height=800,
+        yaxis=dict(
+            range=[0, ymax],             # Forzar el rango del eje Y
+            tickmode="linear",            # Escala lineal
+            tick0=0,                      # Comenzar en 0
+            dtick=20                      # Incrementos de 20
+        ),
         
     )
     
