@@ -89,7 +89,7 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
     #}
     datos_limites = {
         'rango': [-10, 20.01, 40.01, 60.01, 80.01, 100.01, 120.01, 140.01, 10000], #9 elementos
-        'valor_asignado': ['muy bajo', 'bajo', 'medio', 'alto', 'muy alto', 'chungo', 'xtrem', 'defcon1', 'defcon2'],
+        'valor_asignado': ['muy bajo', 'bajo', 'medio', 'alto', 'muy alto', 'chungo', 'xtrem', 'defcon3', 'defcon2'],
     }
     df_limites=pd.DataFrame(datos_limites)
     etiquetas = df_limites['valor_asignado'][:-1]
@@ -112,7 +112,7 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
         'chungo': 'red',
         #'xtrem':'black',
         'xtrem':'darkred',
-        'defcon1': 'purple',
+        'defcon3': 'purple',
         'defcon2': 'purple',
     }
 
