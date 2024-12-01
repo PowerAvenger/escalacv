@@ -140,15 +140,29 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
         color='escala',
         color_discrete_map=colores,
         category_orders={'escala':escala_ordenada_dia},
-        labels={'value':'precio medio diario €/MWh', 'escala':'escala_cv'},
-        title="Precios medios del mercado diario OMIE. Año 2024")
-    
+        labels={'fecha':'fecha','value':'precio medio diario €/MWh', 'escala':'escala_cv'},
+        title="Precios medios del mercado diario OMIE. Año 2024",
+        hover_name='escala'
+    )
+
     graf_ecv_anual.update_xaxes(
+        tickformat="%b",  # Mostrar sólo el mes abreviado (Ej: Jan, Feb)
+        tickvals=pd.date_range(
+            start=datos_dia['fecha'].min(),
+            end=datos_dia['fecha'].max(),
+            freq='MS'  # Generar ticks al inicio de cada mes
+        ),
         showgrid=True
     )
 
     graf_ecv_anual.update_traces(
-        marker_line_width=0
+        marker_line_width=0,
+        customdata=datos_dia['escala'],
+        hovertemplate=(
+            #"<b>Escala:</b> %{customdata}<br>"
+            "<b>Fecha:</b> %{x|%d-%m-%Y}<br>"  # Formato DD-MM-YYYY
+            "<b>Precio:</b> %{y:.2f} €/MWh<br>"
+        )
     )
 
     ymax=datos_dia['value'].max()
