@@ -49,7 +49,7 @@ st.title('Escala Cavero-Vidal©')
 st.caption("Basada en los #telepool de Roberto Cavero. Copyright by Jose Vidal :ok_hand:")
 url_apps = "https://powerappspy-josevidal.streamlit.app/"
 st.write("Visita mi página de [ePowerAPPs](%s) con un montón de utilidades" % url_apps)
-
+st.markdown('Si necesitas contactar, aquí te dejo mi email: [jovidal71@gmail.com](mailto:jovidal71@gmail.com)')
 
 with st.container():
     col1,col2,col3=st.columns([0.7,0.1,0.2])
