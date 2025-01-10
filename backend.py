@@ -141,7 +141,7 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
         color_discrete_map=colores,
         category_orders={'escala':escala_ordenada_dia},
         labels={'fecha':'fecha','value':'precio medio diario €/MWh', 'escala':'escala_cv'},
-        title="Precios medios del mercado diario OMIE. Año 2024",
+        title= f'Precios medios del mercado diario OMIE. Año {st.session_state.año_seleccionado}',
         hover_name='escala'
     )
 
@@ -203,7 +203,7 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
         category_orders={'mes_nombre':datos_mes['mes_nombre'],
                          'escala':escala_ordenada_mes},
         labels={'value':'€/MWh', 'escala':'escala_cv','mes_nombre':'mes'},
-        title="Precios medios mensuales. Año 2024",
+        title=f'Precios medios mensuales. Año {st.session_state.año_seleccionado}',
         text='value'
 
         )
@@ -225,7 +225,7 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
         hole=.4,
         category_orders={'escala':escala_ordenada_dia},
         labels={'num_dias':'num_dias', 'escala':'escala_cv'},
-        title="% y número de días según la Escala CV. Año 2024",
+        title=f'% y número de días según la Escala CV. Año {st.session_state.año_seleccionado}',
         #width=500
         )
     graf_ecv_anual_queso.update_layout(
@@ -247,7 +247,7 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
 
     #grafico con las medias horarias---------------------------------------------------------------------------------------------------------------
     graf_horaria=px.scatter(datos_horarios, x='hora',y='value',
-        title='Perfil horario. Año 2024',                            
+        title=f'Perfil horario. Año {st.session_state.año_seleccionado}',                            
         animation_frame='fecha',
         
         
@@ -291,7 +291,7 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
         color_discrete_map=colores,
         category_orders={'escala':escala_ordenada_dia},
         labels={'value':'€/MWh', 'escala':'escala_cv'},
-        title="Precios medios del mercado diario OMIE. Año 2024. Por meses.",
+        title=f'Precios medios del mercado diario OMIE. Año {st.session_state.año_seleccionado}. Por meses.',
         facet_col='mes_nombre',
         facet_col_wrap=4
 

@@ -17,9 +17,12 @@ st.set_page_config(
 
 fecha_hoy=datetime.today().date()
 
+if 'año_seleccionado' not in st.session_state:
+    st.session_state.año_seleccionado = 2025
+
 id='600'
-fecha_ini='2024-01-01'
-fecha_fin='2024-12-31'
+fecha_ini=f'{st.session_state.año_seleccionado}-01-01'
+fecha_fin=f'{st.session_state.año_seleccionado}-12-31'
 agrupacion='hour'
 
 datos, datos_dia, datos_mes, graf_ecv_anual, graf_ecv_anual_queso, graf_ecv_mensual, graf_horaria, graf_ecv_anual_meses = download_esios_id(id,fecha_ini,fecha_fin,agrupacion)
@@ -38,7 +41,7 @@ fecha_min = datos_dia.loc[datos_dia['value'].idxmin(), 'fecha'].date()
 fecha_max = datos_dia.loc[datos_dia['value'].idxmax(), 'fecha'].date()
     
 
-st.write(ultimo_registro) 
+#st.write(ultimo_registro) 
 #   fecha_descarga=pasar_fecha()
     #st.write(ultima_descarga)
 
@@ -52,13 +55,19 @@ st.write("Visita mi página de [ePowerAPPs](%s) con un montón de utilidades" % 
 #st.markdown('Si necesitas contactar, aquí te dejo mi email: [jovidal71@gmail.com](mailto:jovidal71@gmail.com)')
 st.markdown("¡Sígueme en [Bluesky](https://bsky.app/profile/poweravenger.bsky.social)!")
 
+
+años_lista = list(range(2015, 2026))
+
+
+st.selectbox('Selecciona el año', options = años_lista, key = 'año_seleccionado')
+
 with st.container():
     col1,col2,col3=st.columns([0.7,0.1,0.2])
     with col1:
         st.plotly_chart(graf_ecv_anual)
     with col2:
         st.subheader('Datos en €/MWh',divider='rainbow')
-        st.metric('Precio medio diario 2024', value=valor_medio_diario)
+        st.metric(f'Precio medio diario {st.session_state.año_seleccionado}', value=valor_medio_diario)
         st.metric(f'Precio mínimo diario ( {fecha_min})', value=valor_minimo_diario)
         st.metric(f'Precio máximo diario ({fecha_max})', value=valor_maximo_diario)
     with col3:
