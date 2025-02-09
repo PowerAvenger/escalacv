@@ -64,7 +64,7 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
 
     
     
-    #calculams medias mensuales
+    #calculams medias mensuales-----------------------------
     datos_mes=datos_dia.copy()
     datos_mes=datos_dia.drop(columns=['fecha', 'dia'])
     datos_mes=datos_mes.groupby('mes').agg({
@@ -129,6 +129,7 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
     #print(datos_mes)
 
     datos_dia_queso=datos_dia.groupby(['escala'])['escala'].count()
+    print(datos_dia_queso)
     datos_dia_queso=datos_dia_queso.reset_index(name='num_dias')
     print (datos_dia_queso)
 
@@ -221,7 +222,7 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
         color_discrete_map=colores,
         hole=.4,
         category_orders={'escala':escala_ordenada_dia},
-        labels={'num_dias':'num_dias', 'escala':'escala_cv'},
+        #labels={'num_dias':'num_dias', 'escala':'escala_cv'},
         title=f'% y número de días según la Escala CV. Año {st.session_state.año_seleccionado}',
         #width=500
     )
@@ -229,6 +230,7 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
         title={'x':0.5,'xanchor':'center'},
     )
 
+    #grafico con las medias horarias---------------------------------------------------------------------------------------------------------------
     #datos para el gráfico de medias horarias
     pt_curva_horaria=datos.pivot_table(
         values='value',
@@ -237,7 +239,7 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
     pt_curva_horaria=pt_curva_horaria['value'].round(2)
     pt_curva_horaria=pt_curva_horaria.reset_index()
 
-    #grafico con las medias horarias---------------------------------------------------------------------------------------------------------------
+    
     graf_horaria=px.scatter(datos_horarios, x='hora',y='value',
         title=f'Perfil horario. Año {st.session_state.año_seleccionado}',                            
         animation_frame='fecha',
