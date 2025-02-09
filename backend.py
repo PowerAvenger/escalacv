@@ -217,18 +217,18 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
     ))
     
     #GRÁFICO DE QUESITOS------------------------------------------------------------------------------------------------------------------------------
-    graf_ecv_anual_queso=px.pie(datos_dia_queso, values='num_dias', names='escala',
-        color='escala',
-        color_discrete_map=colores,
-        hole=.4,
-        category_orders={'escala':escala_ordenada_dia},
-        #labels={'num_dias':'num_dias', 'escala':'escala_cv'},
-        title=f'% y número de días según la Escala CV. Año {st.session_state.año_seleccionado}',
+    #graf_ecv_anual_queso=px.pie(datos_dia_queso, values='num_dias', names='escala',
+    #    color='escala',
+    #    color_discrete_map=colores,
+    #    hole=.4,
+    #    category_orders={'escala':escala_ordenada_dia},
+    #    #labels={'num_dias':'num_dias', 'escala':'escala_cv'},
+    #    title=f'% y número de días según la Escala CV. Año {st.session_state.año_seleccionado}',
         #width=500
-    )
-    graf_ecv_anual_queso.update_layout(
-        title={'x':0.5,'xanchor':'center'},
-    )
+    #)
+    #graf_ecv_anual_queso.update_layout(
+    #    title={'x':0.5,'xanchor':'center'},
+    #)
 
     #grafico con las medias horarias---------------------------------------------------------------------------------------------------------------
     #datos para el gráfico de medias horarias
@@ -318,7 +318,7 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
         
     )
     
-    return datos, datos_dia, datos_mes, graf_ecv_anual, graf_ecv_anual_queso, graf_ecv_mensual, graf_horaria, graf_ecv_anual_meses
+    return datos, datos_dia, datos_mes, graf_ecv_anual, graf_ecv_mensual, graf_horaria, graf_ecv_anual_meses #graf_ecv_anual_queso,
 
 
     

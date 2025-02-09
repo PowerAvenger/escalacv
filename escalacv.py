@@ -25,7 +25,7 @@ fecha_ini=f'{st.session_state.año_seleccionado}-01-01'
 fecha_fin=f'{st.session_state.año_seleccionado}-12-31'
 agrupacion='hour'
 
-datos, datos_dia, datos_mes, graf_ecv_anual, graf_ecv_anual_queso, graf_ecv_mensual, graf_horaria, graf_ecv_anual_meses = download_esios_id(id,fecha_ini,fecha_fin,agrupacion)
+datos, datos_dia, datos_mes, graf_ecv_anual, graf_ecv_mensual, graf_horaria, graf_ecv_anual_meses = download_esios_id(id,fecha_ini,fecha_fin,agrupacion) #graf_ecv_anual_queso,
 
 ultimo_registro= datos['fecha'].max()
 valor_minimo_horario=datos['value'].min()
@@ -70,8 +70,8 @@ with st.container():
         st.metric(f'Precio medio diario {st.session_state.año_seleccionado}', value=valor_medio_diario)
         st.metric(f'Precio mínimo diario ( {fecha_min})', value=valor_minimo_diario)
         st.metric(f'Precio máximo diario ({fecha_max})', value=valor_maximo_diario)
-    with col3:
-        st.plotly_chart(graf_ecv_anual_queso)
+    #with col3:
+    #    st.plotly_chart(graf_ecv_anual_queso)
 
 col5,col6,col7=st.columns([.4,.35,.25])
 
