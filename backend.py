@@ -64,11 +64,9 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
 
     
     
-    #datos_mes=datos.copy()
+    #calculams medias mensuales
     datos_mes=datos_dia.copy()
     datos_mes=datos_dia.drop(columns=['fecha', 'dia'])
-    
-    #datos_mes=datos_mes.resample('M').mean()
     datos_mes=datos_mes.groupby('mes').agg({
         'value':'mean',
         'año':'first',
@@ -76,17 +74,15 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
     }).reset_index()
     datos_mes['value']=datos_mes['value'].round(2)
     datos_mes[['mes','año']]=datos_mes[['mes','año']].astype(int)
-    print(datos_mes)
+    
     media_mensual=round(datos_dia['value'].mean(),2)
-    #datos_mes=datos_mes.append({'mes_nombre':'media', 'value':media_mensual}, ignore_index=True)
+    
     df_fila_espacio = pd.DataFrame({'mes': [None], 'value': [0], 'año': [None], 'mes_nombre': ['']})
     df_fila_media=pd.DataFrame({'mes': [13],'value':[media_mensual],'año':['2024'],'mes_nombre':['media']})
     datos_mes=pd.concat([datos_mes, df_fila_espacio, df_fila_media], ignore_index=True)
     print(datos_mes)
-    #datos_limites = {
-    #    'rango': [-10,20.01,40.01,60.01,80.01,100.01,10000], # 7 elementos
-    #    'valor_asignado': ['muy bajo', 'bajo','medio','alto','muy alto','chungo','xtrem'], # 7 elemenos
-    #}
+    
+    # definimos escala en rango y color
     datos_limites = {
         'rango': [-10, 20.01, 40.01, 60.01, 80.01, 100.01, 120.01, 140.01, 10000], #9 elementos
         'valor_asignado': ['muy bajo', 'bajo', 'medio', 'alto', 'muy alto', 'chungo', 'xtrem', 'defcon3', 'defcon2'],
@@ -134,6 +130,7 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
 
     datos_dia_queso=datos_dia.groupby(['escala'])['escala'].count()
     datos_dia_queso=datos_dia_queso.reset_index(name='num_dias')
+    print (datos_dia_queso)
 
     #GRÁFICO PRINCIPAL CON LOS PRECIOS MEDIOS DIARIOS DEL AÑO. ecv es escala cavero vidal-----------------------------------------------------------
     graf_ecv_anual=px.bar(datos_dia, x='fecha', y='value', 
@@ -227,14 +224,9 @@ def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
         labels={'num_dias':'num_dias', 'escala':'escala_cv'},
         title=f'% y número de días según la Escala CV. Año {st.session_state.año_seleccionado}',
         #width=500
-        )
+    )
     graf_ecv_anual_queso.update_layout(
         title={'x':0.5,'xanchor':'center'},
-        
-        #legend=dict(
-        #    x=0.6,
-        #    xanchor='left'
-        #)
     )
 
     #datos para el gráfico de medias horarias
