@@ -48,18 +48,21 @@ fecha_max = datos_dia.loc[datos_dia['value'].idxmax(), 'fecha'].date()
 
 
 
-st.title('Escala Cavero-Vidal©')
+st.title('Escala Cavero-Vidal :orange[e]PowerAPP©')
 st.caption("Basada en los #telepool de Roberto Cavero. Copyright by Jose Vidal :ok_hand:")
 url_apps = "https://powerappspy-josevidal.streamlit.app/"
 st.write("Visita mi página de [ePowerAPPs](%s) con un montón de utilidades" % url_apps)
-#st.markdown('Si necesitas contactar, aquí te dejo mi email: [jovidal71@gmail.com](mailto:jovidal71@gmail.com)')
-st.markdown("¡Sígueme en [Bluesky](https://bsky.app/profile/poweravenger.bsky.social)!")
+url_linkedin = "https://www.linkedin.com/posts/josefvidalsierra_epowerapps-spo2425-telemindex-activity-7281942697399967744-IpFK?utm_source=share&utm_medium=member_deskto"
+url_bluesky = "https://bsky.app/profile/poweravenger.bsky.social"
+st.markdown(f"Deja tus comentarios y propuestas en mi perfil de [Linkedin]({url_linkedin}) - ¡Sígueme en [Bluesky]({url_bluesky})!")
+
 
 
 años_lista = list(range(2015, 2026))
 
-
-st.selectbox('Selecciona el año', options = años_lista, key = 'año_seleccionado')
+cola, colb = st.columns([.2,.8])
+with cola:
+    st.selectbox('Selecciona el año', options = años_lista, key = 'año_seleccionado')
 
 with st.container():
     col1,col2,col3=st.columns([0.7,0.1,0.2])
