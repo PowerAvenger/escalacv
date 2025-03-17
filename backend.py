@@ -12,8 +12,13 @@ from datetime import datetime
 def download_esios_id(id,fecha_ini,fecha_fin,agrupacion):
                        
     token = st.secrets['ESIOS_API_KEY']
-    cab = dict()
-    cab ['x-api-key']= token
+    #cab = dict()
+    #cab ['x-api-key'] = token
+    cab = {
+        'User-Agent': 'Mozilla/5.0',
+        'x-api-key' : token
+    }
+    
     url_id = 'https://api.esios.ree.es/indicators'
     url=f'{url_id}/{id}?geo_ids[]=3&start_date={fecha_ini}T00:00:00&end_date={fecha_fin}T23:59:59&time_trunc={agrupacion}'
     print(url)
