@@ -13,27 +13,27 @@ st.set_page_config(
 )
 
 
-
+#
 
 fecha_hoy=datetime.today().date()
 
 if 'año_seleccionado' not in st.session_state:
     st.session_state.año_seleccionado = 2025
 
-id='600'
+id = '600'
 fecha_ini=f'{st.session_state.año_seleccionado}-01-01'
 fecha_fin=f'{st.session_state.año_seleccionado}-12-31'
-agrupacion='hour'
+agrupacion = 'hour'
 
-datos, datos_dia, datos_mes, graf_ecv_anual, graf_ecv_mensual, graf_horaria, graf_ecv_anual_meses = download_esios_id(id,fecha_ini,fecha_fin,agrupacion) #graf_ecv_anual_queso,
+datos, datos_dia, datos_mes, graf_ecv_anual, graf_ecv_mensual, graf_horaria, graf_ecv_anual_meses = download_esios_id(id, fecha_ini, fecha_fin, agrupacion) #graf_ecv_anual_queso,
 
-ultimo_registro= datos['fecha'].max()
-valor_minimo_horario=datos['value'].min()
-valor_maximo_diario=datos['value'].max()
+ultimo_registro = datos['fecha'].max()
+valor_minimo_horario = datos['value'].min()
+valor_maximo_diario = datos['value'].max()
 
-valor_medio_diario=round(datos_dia['value'].mean(),2)
-valor_minimo_diario=datos_dia['value'].min()
-valor_maximo_diario=datos_dia['value'].max()
+valor_medio_diario = round(datos_dia['value'].mean(),2)
+valor_minimo_diario = datos_dia['value'].min()
+valor_maximo_diario = datos_dia['value'].max()
 
 #fecha_min = datos_dia['value'].idxmin().date()
 fecha_min = datos_dia.loc[datos_dia['value'].idxmin(), 'fecha'].date()
